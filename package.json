@@ -1,0 +1,25 @@
+{
+    "name": "postcss-plugin-custom-primitives",
+    "version": "0.0.0",
+    "description": "PostCSS plugin that helps generating boring utilities",
+    "keywords": [
+        "postcss",
+        "css",
+        "postcss-plugin",
+        "utilities"
+    ],
+    "scripts": {
+        "test": "prettier *.js --write --tab-width 4 --single-quote && jest"
+    },
+    "author": "hilquias <>",
+    "license": "MIT",
+    "repository": "hilquias/postcss-plugin-custom-primitives",
+    "dependencies": {
+        "postcss": "^7.0.27",
+        "postcss-selector-parser": "^6.0.2"
+    },
+    "devDependencies": {
+        "jest": "^25.5.0",
+        "prettier": "^2.0.5"
+    }
+}

@@ -1,0 +1,21 @@
+.set-margin-to-xx-small {
+    margin: var(--spacing--xx-small)
+}
+.set-margin-to-x-small {
+    margin: var(--spacing--x-small)
+}
+.set-margin-to-small {
+    margin: var(--spacing--small)
+}
+.set-margin-to-medium {
+    margin: var(--spacing--medium)
+}
+.set-margin-to-large {
+    margin: var(--spacing--large)
+}
+.set-margin-to-x-large {
+    margin: var(--spacing--x-large)
+}
+.set-margin-to-xx-large {
+    margin: var(--spacing--xx-large)
+}

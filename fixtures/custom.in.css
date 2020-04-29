@@ -1,0 +1,9 @@
+@primitive margin {
+    xx-small: var(--spacing--xx-small);
+    x-small: var(--spacing--x-small);
+    small: var(--spacing--small);
+    medium: var(--spacing--medium);
+    large: var(--spacing--large);
+    x-large: var(--spacing--x-large);
+    xx-large: var(--spacing--xx-large);
+}

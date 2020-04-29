@@ -1,0 +1,21 @@
+.has-margin\:xx-small {
+    margin: var(--spacing--xx-small)
+}
+.has-margin\:x-small {
+    margin: var(--spacing--x-small)
+}
+.has-margin\:small {
+    margin: var(--spacing--small)
+}
+.has-margin\:medium {
+    margin: var(--spacing--medium)
+}
+.has-margin\:large {
+    margin: var(--spacing--large)
+}
+.has-margin\:x-large {
+    margin: var(--spacing--x-large)
+}
+.has-margin\:xx-large {
+    margin: var(--spacing--xx-large)
+}

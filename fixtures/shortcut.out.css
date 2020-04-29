@@ -1,0 +1,21 @@
+.m\:xx-small {
+    margin: var(--spacing--xx-small)
+}
+.m\:x-small {
+    margin: var(--spacing--x-small)
+}
+.m\:small {
+    margin: var(--spacing--small)
+}
+.m\:medium {
+    margin: var(--spacing--medium)
+}
+.m\:large {
+    margin: var(--spacing--large)
+}
+.m\:x-large {
+    margin: var(--spacing--x-large)
+}
+.m\:xx-large {
+    margin: var(--spacing--xx-large)
+}
