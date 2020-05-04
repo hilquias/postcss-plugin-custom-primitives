@@ -1,6 +1,6 @@
-const postcss = require('postcss');
+'use strict';
 
-const selectorParser = require('postcss-selector-parser');
+const postcss = require('postcss');
 
 const processPrimitiveAtRule = (buildRules, atRule) => {
     let atRuleParams = postcss.list.comma(atRule.params);
@@ -23,7 +23,7 @@ const processPrimitiveAtRule = (buildRules, atRule) => {
         valueMap.set(decl.prop, decl.value);
     });
 
-    let outRules = buildRules(atRule, prop, shortcut, valueMap);
+    let outRules = buildRules.call(atRule, prop, shortcut, valueMap);
 
     atRule.replaceWith(...outRules);
 };
@@ -34,18 +34,34 @@ const processPrimitiveAtRules = (buildRules, container) => {
     });
 };
 
-const mkBuildSelector = (prefix, sep) => {
-    return (shortcut, valueName) => {
-        let outSelector = selectorParser.className();
-        outSelector.value = `${prefix}${shortcut}${sep}${valueName}`;
-        return outSelector.toString();
-    };
+const classNameSelector = (className) => {
+    let parser = require('postcss-selector-parser');
+    let out = parser.className();
+    out.value = className;
+    return out.toString();
 };
 
-const mkBuildRule = (buildSelector) => {
-    return (atRule, prop, shortcut, value, valueName) => {
+class BuildSelector {
+    constructor(prefix, sep) {
+        this.prefix = prefix;
+        this.sep = sep;
+    }
+
+    call(shortcut, valueName) {
+        return classNameSelector(
+            `${this.prefix}${shortcut}${this.sep}${valueName}`
+        );
+    }
+}
+
+class BuildRule {
+    constructor(buildSelector) {
+        this.buildSelector = buildSelector;
+    }
+
+    call(atRule, prop, shortcut, value, valueName) {
         let outRule = postcss.rule({
-            selector: buildSelector(shortcut, valueName),
+            selector: this.buildSelector.call(shortcut, valueName),
         });
 
         outRule.source = atRule.source;
@@ -57,53 +73,51 @@ const mkBuildRule = (buildSelector) => {
         outRule.append(outDecl);
 
         return outRule;
-    };
-};
+    }
+}
 
-const mkBuildRules = (buildRule) => {
-    return (atRule, prop, shortcut, valueMap) => {
+class BuildRules {
+    constructor(buildRule) {
+        this.buildRule = buildRule;
+    }
+
+    call(atRule, prop, shortcut, valueMap) {
         let outRules = [];
 
         valueMap.forEach((value, valueName) => {
-            let outRule = buildRule(atRule, prop, shortcut, value, valueName);
+            let outRule = this.buildRule.call(
+                atRule,
+                prop,
+                shortcut,
+                value,
+                valueName
+            );
 
             outRules.push(outRule);
         });
 
         return outRules;
-    };
-};
+    }
+}
 
 module.exports = postcss.plugin(
     'postcss-plugin-custom-primitives',
     (opts = {}) => {
-        let prefix = opts.prefix === undefined ? 'has-' : opts.prefix;
+        const defaultOpts = {
+            prefix: 'has-',
+            sep: ':',
+            buildSelectorClass: BuildSelector,
+            buildRuleClass: BuildRule,
+            buildRulesClass: BuildRules,
+        };
 
-        let sep = opts.sep === undefined ? ':' : opts.sep;
+        opts = { ...defaultOpts, ...opts };
 
-        let buildSelector;
+        let buildSelector = new opts.buildSelectorClass(opts.prefix, opts.sep);
 
-        if (opts.buildSelector) {
-            buildSelector = opts.buildSelector;
-        } else {
-            buildSelector = mkBuildSelector(prefix, sep);
-        }
+        let buildRule = new opts.buildRuleClass(buildSelector);
 
-        let buildRule;
-
-        if (opts.buildRule) {
-            buildRule = opts.buildRule;
-        } else {
-            buildRule = mkBuildRule(buildSelector);
-        }
-
-        let buildRules;
-
-        if (opts.buildRules) {
-            buildRules = opts.buildRules;
-        } else {
-            buildRules = mkBuildRules(buildRule);
-        }
+        let buildRules = new opts.buildRulesClass(buildRule);
 
         return (root, result) => {
             processPrimitiveAtRules(buildRules, root);
@@ -111,8 +125,8 @@ module.exports = postcss.plugin(
     }
 );
 
-module.exports.mkBuildSelector = mkBuildSelector;
+module.exports.BuildSelector = BuildSelector;
 
-module.exports.mkBuildRule = mkBuildRule;
+module.exports.BuildRule = BuildRule;
 
-module.exports.mkBuildRules = mkBuildRules;
+module.exports.BuildRules = BuildRules;
